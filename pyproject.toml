@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "tableauhyperio"
+version = "0.8.0"
+description = "read and write Tableau hyper files using Pandas DataFrames"
+readme = "README.md"
+authors = ["Alexander Fridriksson <post@alexanderfridriksson.com>"]
+license = "BSD-3-Clause"
+repository = "https://github.com/AlexFrid/tableauhyperio"
+
+keywords = ["Tableau", "hyper", "extract", "pandas", "DataFrame"]
+
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Office/Business",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+black = "^19.10b0"
+pandas = "^1.0.4"
+tqdm = "^4.46.1"
+tableauhyperapi = "^0.0.10899"
+flake8 = "^3.8.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
