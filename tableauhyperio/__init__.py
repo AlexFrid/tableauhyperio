@@ -1,4 +1,4 @@
-__version__ = '0.8.0'
+__version__ = 'v0.8.0'
 
 from tableauhyperio.tableauhyperio import read_hyper, to_hyper
 
