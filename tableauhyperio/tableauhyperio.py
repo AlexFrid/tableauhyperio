@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from tableauhyperapi import (
@@ -144,6 +145,9 @@ def to_hyper(df, hyper_file_name, custom_schema="Extract", custom_table_name="Ex
                 ],
             )
             connection.catalog.create_table(hyper_table)
+
+            # Repace NaN with None, otherwise it will not be Null in Tableau
+            df.replace({np.nan: None}, inplace=True)
 
             # Insert the data values into the hyper file
             data_to_insert = df.to_numpy()
