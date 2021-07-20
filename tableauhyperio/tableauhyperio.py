@@ -96,22 +96,26 @@ def read_hyper(path_to_hyper_file, custom_schema="Extract"):
             return df
 
 
-def to_hyper(df, hyper_file_name, custom_schema="Extract", custom_table_name="Extract"):
+def to_hyper(dfs, hyper_file_name, custom_table_names=["Extract"], custom_schema="Extract"):
     """
     Write a Tableau Hyper file from a Pandas DataFrame.
 
-    Currently can only write single table extracts, which is Tableau's
-    default way of creating an extract.
-
     Args:
-        df: Specify which DataFrame you want to output
+        df: Specify which DataFrame or list of DataFrames you want to output
         hyper_file_name: Specify the file name such as "Example.hyper"
         custom_schema: If you need to change the schema name. Defaults to "Extract"
-        custom_table_name: If you need to change the schema name. Defaults to "Extract"
+        custom_table_name: Name or names of the given DataFrames
 
     Returns:
         Tableau Hyper file
     """
+
+    # Check if dfs and xustom_table_names have the right format
+    if type(dfs) is not list:
+        dfs = [dfs]
+    if type(custom_table_names) is not list:
+        custom_table_names = [custom_table_names]
+
 
     # Starts the Hyper Process
     with HyperProcess(
@@ -126,31 +130,34 @@ def to_hyper(df, hyper_file_name, custom_schema="Extract", custom_table_name="Ex
 
             connection.catalog.create_schema(custom_schema)
 
-            # create a .hyper compatible column definition
-            # from pd DataFrame column names and dtypes
-            # using 3 list comprehensions to loop through
-            # all the columns in the DataFrame
+            # Creates one table for each DataFrame
+            for df, name in zip(dfs, custom_table_names):
 
-            column_names = [column for column in df.columns]
+                # create a .hyper compatible column definition
+                # from pd DataFrame column names and dtypes
+                # using 3 list comprehensions to loop through
+                # all the columns in the DataFrame
 
-            column_dtype = [dtype for dtype in df.dtypes]
+                column_names = [column for column in df.columns]
 
-            hyper_table = TableDefinition(
-                TableName(custom_schema, custom_table_name),
-                [
-                    TableDefinition.Column(
-                        column_names[column], dtype_mapper[str(column_dtype[column])]
-                    )
-                    for column in range(len(column_names))
-                ],
-            )
-            connection.catalog.create_table(hyper_table)
+                column_dtype = [dtype for dtype in df.dtypes]
 
-            # Repace NaN with None, otherwise it will not be Null in Tableau
-            df.replace({np.nan: None}, inplace=True)
+                hyper_table = TableDefinition(
+                    TableName(custom_schema, name),
+                    [
+                        TableDefinition.Column(
+                            column_names[column], dtype_mapper[str(column_dtype[column])]
+                        )
+                        for column in range(len(column_names))
+                    ],
+                )
+                connection.catalog.create_table(hyper_table)
 
-            # Insert the data values into the hyper file
-            data_to_insert = df.to_numpy()
-            with Inserter(connection, hyper_table) as inserter:
-                inserter.add_rows(tqdm((row for row in data_to_insert)))
-                inserter.execute()
+                # Repace NaN with None, otherwise it will not be Null in Tableau
+                df.replace({np.nan: None}, inplace=True)
+
+                # Insert the data values into the hyper file
+                data_to_insert = df.to_numpy()
+                with Inserter(connection, hyper_table) as inserter:
+                    inserter.add_rows(tqdm((row for row in data_to_insert)))
+                    inserter.execute()
