@@ -1,3 +1,7 @@
+#DEPRECATED
+
+Go to https://github.com/innobi/pantab for a maintained package
+
 # Tableau Hyper IO: read and write Tableau hyper files using Pandas DataFrames
 [![PyPI](https://img.shields.io/pypi/v/tableauhyperio)](https://pypi.org/project/tableauhyperio)
 [![PyPI - License](https://img.shields.io/pypi/l/tableauhyperio)](https://github.com/AlexFrid/tableauhyperio/blob/master/LICENSE)
