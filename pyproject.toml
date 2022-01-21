@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tableauhyperio"
-version = "v0.8.1"
+version = "0.8.2"
 description = "Read and write Tableau hyper files using Pandas DataFrames"
 readme = "README.md"
 authors = ["Alexander Fridriksson <post@alexanderfridriksson.com>"]
